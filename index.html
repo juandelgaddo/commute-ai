@@ -64,13 +64,13 @@
       output.innerText = "Pensando...";
 
       try {
-        const res = await fetch("https://tu-nombre.vercel.app/api/ask", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ question })
-        });
+        const res = await fetch("https://commute-ai.vercel.app/api/ask", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ question })
+});
 
         const data = await res.json();
         output.innerText = data.answer || "No se pudo obtener respuesta.";
