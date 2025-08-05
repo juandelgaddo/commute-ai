@@ -9,16 +9,17 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: transparent;
       font-family: 'Montserrat', sans-serif;
+      background: transparent;
+      height: auto;
+      overflow: hidden; /* 🔒 evita scroll innecesario */
     }
 
     .chat-container {
       max-width: 600px;
       width: 100%;
-      margin: auto;
-      padding: 0;
-      box-sizing: border-box;
+      padding: 0 10px;
+      margin: 0 auto;
     }
 
     .input-group {
@@ -60,7 +61,7 @@
       font-size: 16px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       display: none;
-      height: 120px; /* Altura fija */
+      height: 120px;
       overflow: hidden;
       box-sizing: border-box;
     }
@@ -150,7 +151,7 @@
         const data = await res.json();
         const answer = data.answer || "No se pudo obtener respuesta.";
         prepareChunks(answer);
-        showNext(); // show first chunk
+        showNext();
       } catch (err) {
         responseText.innerText = "Error: " + err.message;
         toggleText.style.display = "none";
@@ -169,7 +170,7 @@
 
     function prepareChunks(text) {
       const words = text.split(" ");
-      const chunkSize = 25; // approx 3 lines
+      const chunkSize = 25;
       chunks = [];
 
       for (let i = 0; i < words.length; i += chunkSize) {
