@@ -8,17 +8,10 @@
     body {
       font-family: 'Montserrat', sans-serif;
       font-style: italic;
-      background-color: transparent;
-      color: #000;
-      padding: 0;
-      margin: 0;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      background: transparent;
       padding: 20px;
+      margin: 0;
+      text-align: center;
     }
 
     input, button {
@@ -27,80 +20,92 @@
       font-family: 'Montserrat', sans-serif;
       font-style: italic;
       border: 1px solid #ccc;
-      width: 100%;
-      max-width: 500px;
+      margin-top: 10px;
       box-sizing: border-box;
-      margin-bottom: 10px;
+    }
+
+    input {
+      width: 70%;
     }
 
     button {
-      background: black;
+      width: 25%;
+      background-color: black;
       color: white;
       cursor: pointer;
     }
 
-    #response {
+    /* Estilo del modal */
+    .modal {
       display: none;
-      position: relative;
-      margin-top: 10px;
-      padding: 20px;
-      border-radius: 15px;
-      background-color: rgba(255,255,255,0.95);
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      font-style: italic;
-      white-space: pre-wrap;
-      max-width: 500px;
-      width: 100%;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
     }
 
-    #closeBtn {
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 80%;
+      text-align: left;
+      font-style: italic;
+      position: relative;
+    }
+
+    .close-btn {
       position: absolute;
       top: 10px;
       right: 15px;
+      font-weight: bold;
+      cursor: pointer;
       background: none;
       border: none;
+      color: black;
       font-size: 14px;
-      cursor: pointer;
-      color: #000;
-      font-weight: bold;
     }
 
-    #closeBtn:hover {
+    .close-btn:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <input type="text" id="question" placeholder="Escriba su consulta aquí" />
-    <button onclick="askAI()">Consultar</button>
+  <input type="text" id="question" placeholder="Escriba su consulta aquí" />
+  <button onclick="askAI()">Consultar</button>
 
-    <div id="response">
-      <button id="closeBtn" onclick="closeResponse()">Cerrar</button>
-      <div id="answerText">Esperando tu pregunta...</div>
+  <!-- Modal -->
+  <div id="responseModal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal()">Cerrar</button>
+      <div id="responseText">...</div>
     </div>
   </div>
 
   <script>
-    function closeResponse() {
-      document.getElementById("response").style.display = "none";
-      document.getElementById("question").value = "";
+    function closeModal() {
+      document.getElementById("responseModal").style.display = "none";
     }
 
     async function askAI() {
       const question = document.getElementById("question").value.trim();
-      const responseBox = document.getElementById("response");
-      const answerText = document.getElementById("answerText");
+      const modal = document.getElementById("responseModal");
+      const responseText = document.getElementById("responseText");
 
       if (!question) {
-        answerText.innerText = "Por favor escribe una pregunta.";
-        responseBox.style.display = "block";
+        alert("Por favor escribe una pregunta.");
         return;
       }
 
-      answerText.innerText = "Pensando...";
-      responseBox.style.display = "block";
+      responseText.innerText = "Pensando...";
+      modal.style.display = "flex";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -112,11 +117,19 @@
         });
 
         const data = await res.json();
-        answerText.innerText = data.answer || "No se pudo obtener respuesta.";
+        responseText.innerText = data.answer || "No se pudo obtener respuesta.";
       } catch (err) {
-        answerText.innerText = "Error al conectar con la IA: " + err.message;
+        responseText.innerText = "Error al conectar con la IA: " + err.message;
       }
     }
+
+    // Cierra modal al hacer clic fuera del contenido
+    window.onclick = function(event) {
+      const modal = document.getElementById("responseModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
   </script>
 
 </body>
