@@ -2,94 +2,113 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Commute Eyewear AI Search</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <title>Commute AI-wear</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
+      font-style: normal;
       background-color: transparent;
+      color: #000;
+      padding: 0;
       margin: 0;
-      padding: 20px;
     }
 
-    .chat-container {
+    .ai-container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      transition: all 0.3s ease;
+    }
+
+    .input-group {
       display: flex;
       gap: 10px;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
+      flex-direction: row;
     }
 
     input {
-      padding: 10px;
+      flex: 1;
+      padding: 12px;
       border-radius: 8px;
       border: 1px solid #ccc;
+      font-size: 16px;
       font-family: 'Montserrat', sans-serif;
-      font-style: italic;
-      width: 60%;
-      box-sizing: border-box;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 12px 16px;
       border-radius: 8px;
       border: none;
-      background: black;
+      background-color: #000;
       color: white;
+      font-family: 'Montserrat', sans-serif;
       cursor: pointer;
-      font-style: italic;
     }
 
-    .accordion {
-      max-width: 700px;
-      margin: 20px auto;
-      border: 1px solid #ddd;
+    #response-box {
+      margin-top: 15px;
+      padding: 15px;
       border-radius: 10px;
-      overflow: hidden;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       display: none;
-    }
-
-    .accordion-header {
-      background: #f1f1f1;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-weight: bold;
-      font-style: italic;
-    }
-
-    .accordion-body {
-      padding: 20px;
-      background: white;
-      font-style: italic;
+      position: relative;
       white-space: pre-wrap;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .input-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="chat-container">
-    <input type="text" id="question" placeholder="Escriba su consulta aquí" />
-    <button onclick="askAI()">Consultar</button>
-  </div>
-
-  <div class="accordion" id="accordion">
-    <div class="accordion-header" onclick="toggleAccordion()">Respuesta de Commute AI (haz clic para cerrar)</div>
-    <div class="accordion-body" id="response">Esperando pregunta...</div>
+  <div class="ai-container">
+    <div class="input-group">
+      <input type="text" id="question" placeholder="Escriba su consulta aquí" />
+      <button onclick="askAI()">Consultar</button>
+    </div>
+    <div id="response-box">
+      <button class="close-btn" onclick="closeResponse()">Cerrar</button>
+      <div id="response">...</div>
+    </div>
   </div>
 
   <script>
     async function askAI() {
       const question = document.getElementById("question").value.trim();
-      const output = document.getElementById("response");
-      const accordion = document.getElementById("accordion");
+      const responseBox = document.getElementById("response-box");
+      const responseText = document.getElementById("response");
 
       if (!question) {
-        alert("Por favor escribe una pregunta.");
+        responseText.innerText = "Por favor escribe una pregunta.";
+        responseBox.style.display = "block";
         return;
       }
 
-      output.innerText = "Pensando...";
-      accordion.style.display = "block";
+      responseText.innerText = "Pensando...";
+      responseBox.style.display = "block";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -101,15 +120,17 @@
         });
 
         const data = await res.json();
-        output.innerText = data.answer || "No se pudo obtener respuesta.";
+        responseText.innerText = data.answer || "No se pudo obtener respuesta.";
       } catch (err) {
-        output.innerText = "Error al conectar con la IA: " + err.message;
+        responseText.innerText = "Error al conectar con la IA: " + err.message;
       }
     }
 
-    function toggleAccordion() {
-      const body = document.querySelector('.accordion-body');
-      body.style.display = (body.style.display === 'none') ? 'block' : 'none';
+    function closeResponse() {
+      const responseBox = document.getElementById("response-box");
+      const responseText = document.getElementById("response");
+      responseText.innerText = "";
+      responseBox.style.display = "none";
     }
   </script>
 
