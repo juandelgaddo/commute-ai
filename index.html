@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Commute AI-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
@@ -25,10 +25,9 @@
       max-width: 420px;
       width: 100%;
       box-sizing: border-box;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
-    .consulta-box input {
+    input[type="text"] {
       width: 100%;
       padding: 12px 16px;
       font-size: 16px;
@@ -38,46 +37,84 @@
       box-sizing: border-box;
     }
 
-    .consulta-box button {
+    button {
       padding: 10px 20px;
       border: 2px solid #000;
       border-radius: 14px;
-      background-color: white;
+      background-color: #fff;
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
 
-    .consulta-box button:hover {
+    button:hover {
       background-color: #000;
       color: #fff;
     }
 
-    @media (max-width: 500px) {
-      .consulta-box {
-        padding: 15px;
-      }
+    #respuesta {
+      display: none;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 15px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
-      .consulta-box button {
-        width: 100%;
-      }
+    #cerrar {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #000;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+
   <div class="consulta-box">
-    <input type="text" id="user-input" placeholder="Escriba su consulta aquí">
-    <button id="send-button">Consultar</button>
+    <input type="text" id="pregunta" placeholder="Escriba su consulta aquí" />
+    <button onclick="consultar()">Consultar</button>
+
+    <div id="respuesta">
+      <span id="cerrar" onclick="cerrarRespuesta()">Cerrar</span>
+      <div id="contenido-respuesta"></div>
+    </div>
   </div>
 
   <script>
-    document.getElementById('send-button').addEventListener('click', () => {
-      const pregunta = document.getElementById('user-input').value;
-      if (pregunta.trim() !== "") {
-        alert("Consulta enviada: " + pregunta); // Aquí puedes conectar con tu IA
+    async function consultar() {
+      const input = document.getElementById("pregunta");
+      const respuesta = document.getElementById("respuesta");
+      const contenido = document.getElementById("contenido-respuesta");
+
+      const question = input.value.trim();
+      if (!question) return;
+
+      contenido.innerText = "Pensando...";
+      respuesta.style.display = "block";
+
+      try {
+        const res = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        contenido.innerText = data.answer || "No se pudo obtener respuesta.";
+      } catch (err) {
+        contenido.innerText = "Error: " + err.message;
       }
-    });
+    }
+
+    function cerrarRespuesta() {
+      document.getElementById("respuesta").style.display = "none";
+    }
   </script>
+
 </body>
 </html>
