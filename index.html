@@ -1,4 +1,4 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -8,16 +8,10 @@
     body {
       font-family: 'Montserrat', sans-serif;
       font-style: italic;
-      background-color: #f9f9f9;
+      background-color: transparent;
       color: #000;
-      padding: 30px;
-      max-width: 700px;
-      margin: auto;
-    }
-
-    h2 {
-      text-align: center;
-      font-style: italic;
+      padding: 20px;
+      margin: 0;
     }
 
     input, button {
@@ -27,7 +21,7 @@
       font-style: italic;
       border: 1px solid #ccc;
       width: 100%;
-      margin-top: 10px;
+      margin-bottom: 10px;
       box-sizing: border-box;
     }
 
@@ -35,44 +29,40 @@
       background: black;
       color: white;
       cursor: pointer;
+      width: 100%;
     }
 
     #response {
-      display: none; /* oculto al inicio */
       margin-top: 20px;
       padding: 20px;
       border-radius: 15px;
-      background-color: rgba(255,255,255,0.7);
+      background-color: rgba(255,255,255,0.85);
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       font-style: italic;
       white-space: pre-wrap;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <h2>¿Tienes dudas? Pregúntale a Commute AI</h2>
-  <input type="text" id="question" placeholder="Ej. ¿Qué es CR‑39?" />
-  <button onclick="askAI()">Buscar</button>
-  <div id="response"></div>
+  <input type="text" id="question" placeholder="Escriba su consulta aquí" />
+  <button onclick="askAI()">Consultar</button>
+  <div id="response">Esperando su pregunta...</div>
 
   <script>
     async function askAI() {
       const question = document.getElementById("question").value.trim();
       const output = document.getElementById("response");
 
-      // Limpia contenido previo
-      output.innerText = "";
-      output.style.display = "none";
-
       if (!question) {
-        output.innerText = "Por favor escribe una pregunta.";
         output.style.display = "block";
+        output.innerText = "Por favor escriba una consulta.";
         return;
       }
 
-      output.innerText = "Pensando...";
       output.style.display = "block";
+      output.innerText = "Consultando...";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
