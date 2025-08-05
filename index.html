@@ -12,15 +12,13 @@
       margin: 0;
       padding: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
     }
 
     .chat-container {
       max-width: 600px;
-      width: 90%;
-      margin: 20px auto;
+      width: 100%;
+      padding: 20px;
     }
 
     .input-group {
@@ -34,7 +32,6 @@
       font-size: 16px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      width: 100%;
     }
 
     #sendButton {
@@ -45,11 +42,6 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    #sendButton:hover {
-      background: #333;
     }
 
     .response-box {
@@ -60,8 +52,7 @@
       margin-top: 20px;
       font-size: 16px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      overflow: hidden;
+      display: none;
     }
 
     .close-btn {
@@ -75,14 +66,12 @@
       cursor: pointer;
     }
 
-    .response-text {
-      max-height: 4.5em; /* 3 líneas aprox */
-      overflow: hidden;
-      transition: max-height 0.3s ease;
+    .response-text span {
+      display: none;
     }
 
-    .response-box.expanded .response-text {
-      max-height: 1000px;
+    .response-text span.visible {
+      display: inline;
     }
 
     .toggle-text {
@@ -108,10 +97,10 @@
       <button id="sendButton">Consultar</button>
     </div>
 
-    <div class="response-box hidden" id="responseBox">
+    <div class="response-box" id="responseBox">
       <button class="close-btn" onclick="closeResponse()">Cerrar</button>
       <div class="response-text" id="responseText"></div>
-      <div class="toggle-text" id="toggleText" onclick="toggleExpand()">Continuar leyendo</div>
+      <div class="toggle-text" id="toggleText" onclick="showMore()">Continuar leyendo</div>
     </div>
   </div>
 
@@ -123,13 +112,17 @@
     const toggleText = document.getElementById("toggleText");
     const inputGroup = document.getElementById("inputGroup");
 
+    let currentIndex = 0;
+    let spanSegments = [];
+
     sendButton.addEventListener("click", async () => {
       const question = userInput.value.trim();
       if (!question) return;
 
       inputGroup.classList.add("hidden");
-      responseBox.classList.remove("hidden");
+      responseBox.style.display = "block";
       responseText.innerText = "Pensando...";
+      toggleText.style.display = "none";
 
       try {
         const res = await fetch("/api/ask", {
@@ -140,14 +133,7 @@
 
         const data = await res.json();
         const answer = data.answer || "No se pudo obtener respuesta.";
-        responseText.innerText = answer;
-
-        // Si la respuesta es corta, oculta "Continuar leyendo"
-        if (answer.length < 300) {
-          toggleText.style.display = "none";
-        } else {
-          toggleText.style.display = "block";
-        }
+        displayInChunks(answer);
       } catch (err) {
         responseText.innerText = "Error: " + err.message;
         toggleText.style.display = "none";
@@ -155,15 +141,40 @@
     });
 
     function closeResponse() {
-      responseBox.classList.remove("expanded");
-      responseBox.classList.add("hidden");
+      responseBox.style.display = "none";
       inputGroup.classList.remove("hidden");
       userInput.value = "";
+      responseText.innerHTML = "";
+      toggleText.style.display = "none";
+      currentIndex = 0;
+      spanSegments = [];
     }
 
-    function toggleExpand() {
-      responseBox.classList.toggle("expanded");
-      toggleText.textContent = responseBox.classList.contains("expanded") ? "Mostrar menos" : "Continuar leyendo";
+    function displayInChunks(text) {
+      const words = text.split(" ");
+      const wordsPerChunk = 25; // Aproximadamente 3 líneas
+      spanSegments = [];
+
+      for (let i = 0; i < words.length; i += wordsPerChunk) {
+        const chunk = words.slice(i, i + wordsPerChunk).join(" ");
+        const span = document.createElement("span");
+        span.textContent = chunk + " ";
+        if (i === 0) span.classList.add("visible");
+        spanSegments.push(span);
+        responseText.appendChild(span);
+      }
+
+      toggleText.style.display = spanSegments.length > 1 ? "block" : "none";
+    }
+
+    function showMore() {
+      if (currentIndex < spanSegments.length - 1) {
+        currentIndex++;
+        spanSegments[currentIndex].classList.add("visible");
+        if (currentIndex === spanSegments.length - 1) {
+          toggleText.style.display = "none";
+        }
+      }
     }
   </script>
 
