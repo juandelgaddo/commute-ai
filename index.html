@@ -115,7 +115,7 @@
 
         const data = await res.json();
         removeLastMessage(chat); // Remove "Pensando..."
-        appendMessage("Commute AI: " + (data.answer || "No se pudo obtener respuesta."), chat);
+        appendMessage("Commute AI-wear: " + (data.answer || "No se pudo obtener respuesta."), chat);
       } catch (err) {
         removeLastMessage(chat);
         appendMessage("Error: " + err.message, chat);
