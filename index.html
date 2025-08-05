@@ -13,6 +13,7 @@
       padding: 30px;
       max-width: 700px;
       margin: auto;
+      transition: all 0.3s ease;
     }
     h2 {
       text-align: center;
@@ -34,7 +35,58 @@
       cursor: pointer;
     }
     #response {
+      display: none; /* oculto al inicio */
       margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      background-color: rgba(255,255,255,0.7);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-style: italic;
+      white-space: pre-wrap;
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>¿Tienes dudas? Pregúntale a Commute AI</h2>
+  <input type="text" id="question" placeholder="Ej. ¿Qué es CR‑39?" />
+  <button onclick="askAI()">Buscar</button>
+  <div id="response"></div>
+
+  <script>
+    async function askAI() {
+      const question = document.getElementById("question").value.trim();
+      const output = document.getElementById("response");
+
+      if (!question) {
+        output.style.display = "block";
+        output.innerText = "Por favor escribe una pregunta.";
+        return;
+      }
+
+      output.style.display = "block";
+      output.innerText = "Pensando...";
+
+      try {
+        const res = await fetch("https://commute-ai.vercel.app/api/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+        output.innerText = data.answer || "No se pudo obtener respuesta.";
+      } catch (err) {
+        output.innerText = "Error al conectar con la IA: " + err.message;
+      }
+    }
+  </script>
+
+</body>
+</html>      margin-top: 20px;
       padding: 20px;
       border-radius: 15px;
       background-color: rgba(255,255,255,0.7);
