@@ -1,176 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Commute AI-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
-      background: transparent;
+      background-color: #e8d5b7;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
-    .chat-container {
-      max-width: 600px;
+    .consulta-box {
+      background: #fff;
+      border: 2px dashed #aaa;
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 420px;
       width: 100%;
-      padding: 20px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    #userInput {
-      padding: 12px;
+    .consulta-box input {
+      width: 100%;
+      padding: 12px 16px;
       font-size: 16px;
-      border-radius: 8px;
       border: 1px solid #ccc;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
     }
 
-    #sendButton {
-      background: black;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .response-box {
-      position: relative;
-      background: white;
+    .consulta-box button {
+      padding: 10px 20px;
+      border: 2px solid #000;
       border-radius: 14px;
-      padding: 20px;
-      margin-top: 20px;
+      background-color: white;
       font-size: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      display: none;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 14px;
-      border: none;
-      background: none;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .response-text {
-      margin-top: 20px;
-      min-height: 60px;
-    }
-
-    .toggle-text {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
       font-weight: 500;
-      color: #333;
       cursor: pointer;
-      user-select: none;
+      transition: 0.3s;
     }
 
-    .hidden {
-      display: none;
+    .consulta-box button:hover {
+      background-color: #000;
+      color: #fff;
+    }
+
+    @media (max-width: 500px) {
+      .consulta-box {
+        padding: 15px;
+      }
+
+      .consulta-box button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-
-  <div class="chat-container">
-    <div class="input-group" id="inputGroup">
-      <input type="text" id="userInput" placeholder="Escriba su consulta aquí">
-      <button id="sendButton">Consultar</button>
-    </div>
-
-    <div class="response-box" id="responseBox">
-      <button class="close-btn" onclick="closeResponse()">Cerrar</button>
-      <div class="response-text" id="responseText"></div>
-      <div class="toggle-text" id="toggleText" onclick="showNext()">Continuar leyendo</div>
-    </div>
+  <div class="consulta-box">
+    <input type="text" id="user-input" placeholder="Escriba su consulta aquí">
+    <button id="send-button">Consultar</button>
   </div>
 
   <script>
-    const sendButton = document.getElementById("sendButton");
-    const userInput = document.getElementById("userInput");
-    const responseBox = document.getElementById("responseBox");
-    const responseText = document.getElementById("responseText");
-    const toggleText = document.getElementById("toggleText");
-    const inputGroup = document.getElementById("inputGroup");
-
-    let chunks = [];
-    let currentIndex = 0;
-
-    sendButton.addEventListener("click", async () => {
-      const question = userInput.value.trim();
-      if (!question) return;
-
-      inputGroup.classList.add("hidden");
-      responseBox.style.display = "block";
-      responseText.innerText = "Pensando...";
-      toggleText.style.display = "none";
-
-      try {
-        const res = await fetch("/api/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question })
-        });
-
-        const data = await res.json();
-        const answer = data.answer || "No se pudo obtener respuesta.";
-        prepareChunks(answer);
-        showNext(); // show first chunk
-      } catch (err) {
-        responseText.innerText = "Error: " + err.message;
-        toggleText.style.display = "none";
+    document.getElementById('send-button').addEventListener('click', () => {
+      const pregunta = document.getElementById('user-input').value;
+      if (pregunta.trim() !== "") {
+        alert("Consulta enviada: " + pregunta); // Aquí puedes conectar con tu IA
       }
     });
-
-    function closeResponse() {
-      responseBox.style.display = "none";
-      inputGroup.classList.remove("hidden");
-      userInput.value = "";
-      responseText.innerHTML = "";
-      toggleText.style.display = "none";
-      chunks = [];
-      currentIndex = 0;
-    }
-
-    function prepareChunks(text) {
-      const words = text.split(" ");
-      const chunkSize = 25; // aprox. 3 líneas
-      chunks = [];
-
-      for (let i = 0; i < words.length; i += chunkSize) {
-        chunks.push(words.slice(i, i + chunkSize).join(" "));
-      }
-
-      currentIndex = 0;
-      toggleText.style.display = chunks.length > 1 ? "block" : "none";
-    }
-
-    function showNext() {
-      if (currentIndex < chunks.length) {
-        responseText.innerText = chunks[currentIndex];
-        currentIndex++;
-        if (currentIndex >= chunks.length) {
-          toggleText.style.display = "none";
-        }
-      }
-    }
   </script>
-
 </body>
 </html>
