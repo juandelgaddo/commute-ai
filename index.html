@@ -2,121 +2,170 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Commute AI-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
+      background: transparent;
       margin: 0;
       padding: 0;
-      background: transparent;
-    }
-
-    .chat-container {
-      max-width: 100%;
-      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
-    #question {
-      width: 100%;
-      max-width: 500px;
+    .chat-container {
+      max-width: 600px;
+      width: 90%;
+      margin: 20px auto;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #userInput {
       padding: 12px;
       font-size: 16px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      margin-bottom: 10px;
-      box-sizing: border-box;
+      width: 100%;
     }
 
-    #askButton {
-      background-color: black;
+    #sendButton {
+      background: black;
       color: white;
+      padding: 10px;
       border: none;
-      padding: 12px 24px;
-      font-size: 16px;
       border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #sendButton:hover {
+      background: #333;
     }
 
     .response-box {
       position: relative;
-      width: 100%;
-      max-width: 500px;
-      margin-top: 10px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 10px;
+      background: white;
+      border-radius: 14px;
       padding: 20px;
-      box-sizing: border-box;
+      margin-top: 20px;
       font-size: 16px;
-      display: none;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      overflow: hidden;
     }
 
     .close-btn {
       position: absolute;
-      top: 8px;
-      right: 10px;
-      background: none;
+      top: 10px;
+      right: 14px;
       border: none;
-      color: #333;
+      background: none;
       font-weight: bold;
       font-size: 14px;
       cursor: pointer;
     }
+
+    .response-text {
+      max-height: 4.5em; /* 3 líneas aprox */
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .response-box.expanded .response-text {
+      max-height: 1000px;
+    }
+
+    .toggle-text {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div class="chat-container">
-    <input type="text" id="question" placeholder="Escriba su consulta aquí" />
-    <button id="askButton" onclick="askAI()">Consultar</button>
 
-    <div class="response-box" id="responseBox">
+  <div class="chat-container">
+    <div class="input-group" id="inputGroup">
+      <input type="text" id="userInput" placeholder="Escriba su consulta aquí">
+      <button id="sendButton">Consultar</button>
+    </div>
+
+    <div class="response-box hidden" id="responseBox">
       <button class="close-btn" onclick="closeResponse()">Cerrar</button>
-      <div id="responseText">...</div>
+      <div class="response-text" id="responseText"></div>
+      <div class="toggle-text" id="toggleText" onclick="toggleExpand()">Continuar leyendo</div>
     </div>
   </div>
 
   <script>
-    async function askAI() {
-      const question = document.getElementById("question").value.trim();
-      const input = document.getElementById("question");
-      const button = document.getElementById("askButton");
-      const responseBox = document.getElementById("responseBox");
-      const responseText = document.getElementById("responseText");
+    const sendButton = document.getElementById("sendButton");
+    const userInput = document.getElementById("userInput");
+    const responseBox = document.getElementById("responseBox");
+    const responseText = document.getElementById("responseText");
+    const toggleText = document.getElementById("toggleText");
+    const inputGroup = document.getElementById("inputGroup");
 
-      if (!question) {
-        alert("Por favor escriba una consulta.");
-        return;
-      }
+    sendButton.addEventListener("click", async () => {
+      const question = userInput.value.trim();
+      if (!question) return;
 
-      input.style.display = "none";
-      button.style.display = "none";
-      responseBox.style.display = "block";
+      inputGroup.classList.add("hidden");
+      responseBox.classList.remove("hidden");
       responseText.innerText = "Pensando...";
 
       try {
-        const res = await fetch("https://commute-ai.vercel.app/api/ask", {
+        const res = await fetch("/api/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question })
         });
 
         const data = await res.json();
-        responseText.innerText = data.answer || "No se pudo obtener respuesta.";
+        const answer = data.answer || "No se pudo obtener respuesta.";
+        responseText.innerText = answer;
+
+        // Si la respuesta es corta, oculta "Continuar leyendo"
+        if (answer.length < 300) {
+          toggleText.style.display = "none";
+        } else {
+          toggleText.style.display = "block";
+        }
       } catch (err) {
-        responseText.innerText = "Error al conectar con la IA: " + err.message;
+        responseText.innerText = "Error: " + err.message;
+        toggleText.style.display = "none";
       }
-    }
+    });
 
     function closeResponse() {
-      document.getElementById("responseBox").style.display = "none";
-      document.getElementById("question").style.display = "block";
-      document.getElementById("askButton").style.display = "block";
-      document.getElementById("question").value = "";
+      responseBox.classList.remove("expanded");
+      responseBox.classList.add("hidden");
+      inputGroup.classList.remove("hidden");
+      userInput.value = "";
+    }
+
+    function toggleExpand() {
+      responseBox.classList.toggle("expanded");
+      toggleText.textContent = responseBox.classList.contains("expanded") ? "Mostrar menos" : "Continuar leyendo";
     }
   </script>
+
 </body>
 </html>
