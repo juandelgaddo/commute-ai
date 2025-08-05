@@ -66,12 +66,9 @@
       cursor: pointer;
     }
 
-    .response-text span {
-      display: none;
-    }
-
-    .response-text span.visible {
-      display: inline;
+    .response-text {
+      margin-top: 20px;
+      min-height: 60px;
     }
 
     .toggle-text {
@@ -100,7 +97,7 @@
     <div class="response-box" id="responseBox">
       <button class="close-btn" onclick="closeResponse()">Cerrar</button>
       <div class="response-text" id="responseText"></div>
-      <div class="toggle-text" id="toggleText" onclick="showMore()">Continuar leyendo</div>
+      <div class="toggle-text" id="toggleText" onclick="showNext()">Continuar leyendo</div>
     </div>
   </div>
 
@@ -112,8 +109,8 @@
     const toggleText = document.getElementById("toggleText");
     const inputGroup = document.getElementById("inputGroup");
 
+    let chunks = [];
     let currentIndex = 0;
-    let spanSegments = [];
 
     sendButton.addEventListener("click", async () => {
       const question = userInput.value.trim();
@@ -133,7 +130,8 @@
 
         const data = await res.json();
         const answer = data.answer || "No se pudo obtener respuesta.";
-        displayInChunks(answer);
+        prepareChunks(answer);
+        showNext(); // show first chunk
       } catch (err) {
         responseText.innerText = "Error: " + err.message;
         toggleText.style.display = "none";
@@ -146,32 +144,28 @@
       userInput.value = "";
       responseText.innerHTML = "";
       toggleText.style.display = "none";
+      chunks = [];
       currentIndex = 0;
-      spanSegments = [];
     }
 
-    function displayInChunks(text) {
+    function prepareChunks(text) {
       const words = text.split(" ");
-      const wordsPerChunk = 25; // Aproximadamente 3 líneas
-      spanSegments = [];
+      const chunkSize = 25; // aprox. 3 líneas
+      chunks = [];
 
-      for (let i = 0; i < words.length; i += wordsPerChunk) {
-        const chunk = words.slice(i, i + wordsPerChunk).join(" ");
-        const span = document.createElement("span");
-        span.textContent = chunk + " ";
-        if (i === 0) span.classList.add("visible");
-        spanSegments.push(span);
-        responseText.appendChild(span);
+      for (let i = 0; i < words.length; i += chunkSize) {
+        chunks.push(words.slice(i, i + chunkSize).join(" "));
       }
 
-      toggleText.style.display = spanSegments.length > 1 ? "block" : "none";
+      currentIndex = 0;
+      toggleText.style.display = chunks.length > 1 ? "block" : "none";
     }
 
-    function showMore() {
-      if (currentIndex < spanSegments.length - 1) {
+    function showNext() {
+      if (currentIndex < chunks.length) {
+        responseText.innerText = chunks[currentIndex];
         currentIndex++;
-        spanSegments[currentIndex].classList.add("visible");
-        if (currentIndex === spanSegments.length - 1) {
+        if (currentIndex >= chunks.length) {
           toggleText.style.display = "none";
         }
       }
