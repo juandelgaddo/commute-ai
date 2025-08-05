@@ -16,7 +16,7 @@
     }
 
     .chat-container {
-      max-width: 360px; /* Ancho reducido */
+      max-width: 360px;
       width: 100%;
       padding: 20px;
     }
@@ -29,7 +29,7 @@
 
     #userInput {
       padding: 12px;
-      font-size: 15px; /* Tamaño de letra reducido */
+      font-size: 15px;
       border-radius: 8px;
       border: 1px solid #ccc;
     }
@@ -50,7 +50,7 @@
       border-radius: 14px;
       padding: 20px;
       margin-top: 20px;
-      font-size: 15px; /* Tamaño de letra reducido */
+      font-size: 15px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       display: none;
     }
@@ -131,7 +131,7 @@
         const data = await res.json();
         const answer = data.answer || "No se pudo obtener respuesta.";
         prepareChunks(answer);
-        showNext();
+        showNext(); // mostrar primer bloque
       } catch (err) {
         responseText.innerText = "Error: " + err.message;
         toggleText.style.display = "none";
@@ -150,7 +150,7 @@
 
     function prepareChunks(text) {
       const words = text.split(" ");
-      const chunkSize = 25;
+      const chunkSize = 25; // Aprox. 3 líneas
       chunks = [];
 
       for (let i = 0; i < words.length; i += chunkSize) {
