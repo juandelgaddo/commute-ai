@@ -33,6 +33,7 @@
     }
 
     #response {
+      position: relative;
       margin-top: 20px;
       padding: 20px;
       border-radius: 15px;
@@ -42,13 +43,28 @@
       white-space: pre-wrap;
       display: none;
     }
+
+    #closeBtn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #333;
+    }
   </style>
 </head>
 <body>
 
   <input type="text" id="question" placeholder="Escriba su consulta aquí" />
   <button onclick="askAI()">Consultar</button>
-  <div id="response">Esperando su pregunta...</div>
+
+  <div id="response">
+    <button id="closeBtn" onclick="document.getElementById('response').style.display='none'">✕</button>
+    Esperando su pregunta...
+  </div>
 
   <script>
     async function askAI() {
@@ -62,7 +78,7 @@
       }
 
       output.style.display = "block";
-      output.innerText = "Consultando...";
+      output.innerHTML = '<button id="closeBtn" onclick="document.getElementById(\'response\').style.display=\'none\'">✕</button>Pensando...';
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -74,9 +90,9 @@
         });
 
         const data = await res.json();
-        output.innerText = data.answer || "No se pudo obtener respuesta.";
+        output.innerHTML = `<button id="closeBtn" onclick="document.getElementById('response').style.display='none'">✕</button>${data.answer || "No se pudo obtener respuesta."}`;
       } catch (err) {
-        output.innerText = "Error al conectar con la IA: " + err.message;
+        output.innerHTML = `<button id="closeBtn" onclick="document.getElementById('response').style.display='none'">✕</button>Error al conectar con la IA: ${err.message}`;
       }
     }
   </script>
