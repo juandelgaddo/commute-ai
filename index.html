@@ -11,110 +11,96 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      background: transparent;
+    body {
       font-family: 'Montserrat', sans-serif;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .chat-box {
+    .ai-container {
       width: 100%;
       max-width: 380px;
-      margin: auto;
+    }
+
+    .ai-response {
       background: white;
       border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
       padding: 16px;
-      display: flex;
-      flex-direction: column;
-      height: 280px; /* Altura fija */
-      overflow: hidden;
-    }
-
-    .chat-response {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 4px;
       margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #000;
       font-size: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
+      cursor: pointer;
+      font-weight: bold;
     }
 
-    .chat-input-area {
-      display: flex;
-      gap: 10px;
-    }
-
-    .chat-input {
-      flex: 1;
+    .ai-input {
+      width: 100%;
       padding: 10px;
       font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      outline: none;
+      margin-bottom: 10px;
     }
 
-    .chat-button {
+    .ai-button {
+      width: 100%;
       background-color: #000;
       color: white;
       border: none;
       padding: 10px;
       border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .chat-button svg {
-      width: 16px;
-      height: 16px;
     }
 
     @media (max-width: 480px) {
-      .chat-box {
+      .ai-container {
         max-width: 100%;
-        height: 300px;
-      }
-
-      .chat-input-area {
-        flex-direction: column;
-      }
-
-      .chat-button {
-        width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="chat-box">
-    <div class="chat-response" id="chatResponse">Escribe tu consulta abajo...</div>
-    <div class="chat-input-area">
-      <input type="text" id="userInput" class="chat-input" placeholder="Escriba su consulta aquí" />
-      <button class="chat-button" onclick="askAI()">
-        <!-- Flecha hacia arriba -->
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
-          viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      </button>
+  <div class="ai-container">
+    <div id="responseContainer" style="display: none;" class="ai-response">
+      <button class="close-button" onclick="closeResponse()">Cerrar</button>
+      <div id="responseText">Respuesta aquí</div>
     </div>
+
+    <input type="text" id="userInput" class="ai-input" placeholder="Escriba su consulta aquí" />
+    <button class="ai-button" onclick="askAI()">
+      ↑
+    </button>
   </div>
 
   <script>
     async function askAI() {
       const input = document.getElementById("userInput");
-      const responseBox = document.getElementById("chatResponse");
+      const responseContainer = document.getElementById("responseContainer");
+      const responseText = document.getElementById("responseText");
       const question = input.value.trim();
 
       if (!question) {
-        responseBox.innerText = "Por favor escribe una consulta.";
+        responseText.innerText = "Por favor escribe una consulta.";
+        responseContainer.style.display = "block";
         return;
       }
 
-      responseBox.innerText = "Pensando...";
+      responseText.innerText = "Pensando...";
+      responseContainer.style.display = "block";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -126,12 +112,17 @@
         });
 
         const data = await res.json();
-        responseBox.innerText = "Commute AI-wear: " + (data.answer || "No se pudo obtener respuesta.");
+        responseText.innerText = "Commute AI-wear: " + (data.answer || "No se pudo obtener respuesta.");
       } catch (err) {
-        responseBox.innerText = "Error al conectar con Commute AI-wear: " + err.message;
+        responseText.innerText = "Error al conectar con Commute AI-wear: " + err.message;
       }
 
       input.value = "";
+    }
+
+    function closeResponse() {
+      const responseContainer = document.getElementById("responseContainer");
+      responseContainer.style.display = "none";
     }
   </script>
 
