@@ -1,106 +1,87 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Commute AI-wear</title>
+  <title>Commute Ai-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Montserrat', sans-serif;
       background: transparent;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
+      padding: 0;
+      margin: 0;
     }
-
     .ai-container {
-      width: 100%;
-      max-width: 380px;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 10px;
     }
-
-    .ai-response {
-      background: white;
-      border-radius: 16px;
+    .search-box, .response-box {
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      background: #fff;
       padding: 16px;
-      margin-bottom: 12px;
-      position: relative;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
-    .close-button {
-      position: absolute;
-      top: 10px;
-      right: 16px;
-      background: none;
-      border: none;
-      color: #000;
-      font-size: 14px;
-      cursor: pointer;
-      font-weight: bold;
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
     }
-
-    .ai-input {
+    button {
+      margin-top: 10px;
       width: 100%;
       padding: 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .ai-button {
-      width: 100%;
-      background-color: #000;
+      background: black;
       color: white;
       border: none;
-      padding: 10px;
       border-radius: 8px;
-      font-size: 16px;
+      font-family: 'Montserrat', sans-serif;
       cursor: pointer;
     }
-
-    @media (max-width: 480px) {
-      .ai-container {
-        max-width: 100%;
-      }
+    .response-box {
+      position: relative;
+      margin-top: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
   <div class="ai-container">
-    <div id="responseContainer" style="display: none;" class="ai-response">
-      <button class="close-button" onclick="closeResponse()">Cerrar</button>
-      <div id="responseText">Respuesta aquí</div>
+    <div id="search-section">
+      <div class="search-box">
+        <input type="text" id="question" placeholder="Escriba su consulta aquí" />
+        <button onclick="askAI()">Consultar</button>
+      </div>
     </div>
-
-    <input type="text" id="userInput" class="ai-input" placeholder="Escriba su consulta aquí" />
-    <button class="ai-button" onclick="askAI()">
-      ↑
-    </button>
-  </div>
-
-  <script>
+    <div id="response-section" style="display:none;">
+      <div class="response-box">
+        <button class="close-btn" onclick="resetAI()">Cerrar</button>
+        <div id="response-text"></div>
+      </div>
+    </div>
+  </div>  <script>
     async function askAI() {
-      const input = document.getElementById("userInput");
-      const responseContainer = document.getElementById("responseContainer");
-      const responseText = document.getElementById("responseText");
-      const question = input.value.trim();
+      const question = document.getElementById("question").value.trim();
+      const search = document.getElementById("search-section");
+      const responseBox = document.getElementById("response-section");
+      const responseText = document.getElementById("response-text");
 
-      if (!question) {
-        responseText.innerText = "Por favor escribe una consulta.";
-        responseContainer.style.display = "block";
-        return;
-      }
+      if (!question) return;
 
+      search.style.display = "none";
+      responseBox.style.display = "block";
       responseText.innerText = "Pensando...";
-      responseContainer.style.display = "block";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -112,19 +93,16 @@
         });
 
         const data = await res.json();
-        responseText.innerText = "Commute AI-wear: " + (data.answer || "No se pudo obtener respuesta.");
+        responseText.innerText = "Commute Ai-wear: " + (data.answer || "No se pudo obtener respuesta.");
       } catch (err) {
-        responseText.innerText = "Error al conectar con Commute AI-wear: " + err.message;
+        responseText.innerText = "Error: " + err.message;
       }
-
-      input.value = "";
     }
 
-    function closeResponse() {
-      const responseContainer = document.getElementById("responseContainer");
-      responseContainer.style.display = "none";
+    function resetAI() {
+      document.getElementById("response-section").style.display = "none";
+      document.getElementById("search-section").style.display = "block";
+      document.getElementById("question").value = "";
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
