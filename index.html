@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Commute AI</title>
+  <title>Commute Eyewear AI Search</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
   <style>
     body {
@@ -17,6 +17,7 @@
       gap: 10px;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     input {
@@ -39,40 +40,28 @@
       font-style: italic;
     }
 
-    /* Estilo del modal */
-    .modal {
+    .accordion {
+      max-width: 700px;
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      overflow: hidden;
       display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.4);
-      justify-content: center;
-      align-items: center;
     }
 
-    .modal-content {
-      background-color: #fff;
+    .accordion-header {
+      background: #f1f1f1;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    .accordion-body {
       padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      width: 90%;
-      position: relative;
+      background: white;
       font-style: italic;
       white-space: pre-wrap;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      background: none;
-      border: none;
-      font-size: 14px;
-      color: black;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -83,18 +72,16 @@
     <button onclick="askAI()">Consultar</button>
   </div>
 
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">Cerrar</button>
-      <div id="response"></div>
-    </div>
+  <div class="accordion" id="accordion">
+    <div class="accordion-header" onclick="toggleAccordion()">Respuesta de Commute AI (haz clic para cerrar)</div>
+    <div class="accordion-body" id="response">Esperando pregunta...</div>
   </div>
 
   <script>
     async function askAI() {
       const question = document.getElementById("question").value.trim();
       const output = document.getElementById("response");
-      const modal = document.getElementById("modal");
+      const accordion = document.getElementById("accordion");
 
       if (!question) {
         alert("Por favor escribe una pregunta.");
@@ -102,7 +89,7 @@
       }
 
       output.innerText = "Pensando...";
-      modal.style.display = "flex";
+      accordion.style.display = "block";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -120,8 +107,9 @@
       }
     }
 
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
+    function toggleAccordion() {
+      const body = document.querySelector('.accordion-body');
+      body.style.display = (body.style.display === 'none') ? 'block' : 'none';
     }
   </script>
 
