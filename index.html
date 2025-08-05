@@ -6,13 +6,11 @@
   <title>Commute AI-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      font-family: 'Montserrat', sans-serif;
-      background: transparent;
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow: hidden;
+      background: transparent;
+      font-family: 'Montserrat', sans-serif;
     }
 
     .chat-container {
@@ -20,32 +18,39 @@
       height: 240px;
       padding: 10px;
       box-sizing: border-box;
-      margin: auto;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
     .input-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
     }
 
     #userInput {
-      padding: 6px;
-      font-size: 13px;
-      border-radius: 6px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
 
     #sendButton {
       background: black;
       color: white;
-      padding: 6px;
+      padding: 10px;
       border: none;
-      border-radius: 6px;
-      font-size: 13px;
+      border-radius: 8px;
+      font-size: 14px;
       cursor: pointer;
     }
 
@@ -55,43 +60,45 @@
       border-radius: 10px;
       padding: 10px;
       margin-top: 10px;
-      font-size: 12.5px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      flex-grow: 1;
-      overflow: hidden;
+      font-size: 14px;
       display: none;
-      flex-direction: column;
     }
 
     .close-btn {
       position: absolute;
       top: 6px;
-      right: 8px;
+      right: 10px;
       border: none;
       background: none;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
     }
 
     .response-text {
-      margin-top: 20px;
-      height: 35px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      margin-top: 24px;
+      min-height: 40px;
+      font-size: 13px;
     }
 
     .toggle-text {
       text-align: center;
-      margin-top: auto;
-      font-size: 11.5px;
+      margin-top: 8px;
+      font-size: 12px;
       color: #333;
       cursor: pointer;
-      user-select: none;
     }
 
     .hidden {
       display: none;
+    }
+
+    @media (max-width: 400px) {
+      .chat-container {
+        width: 90%;
+        height: auto;
+        bottom: 10px;
+      }
     }
   </style>
 </head>
@@ -126,7 +133,7 @@
       if (!question) return;
 
       inputGroup.classList.add("hidden");
-      responseBox.style.display = "flex";
+      responseBox.style.display = "block";
       responseText.innerText = "Pensando...";
       toggleText.style.display = "none";
 
@@ -140,7 +147,7 @@
         const data = await res.json();
         const answer = data.answer || "No se pudo obtener respuesta.";
         prepareChunks(answer);
-        showNext(); // mostrar primer bloque
+        showNext();
       } catch (err) {
         responseText.innerText = "Error: " + err.message;
         toggleText.style.display = "none";
@@ -159,7 +166,7 @@
 
     function prepareChunks(text) {
       const words = text.split(" ");
-      const chunkSize = 15; // menos palabras = 2 líneas
+      const chunkSize = 18; // Aprox. 2 líneas
       chunks = [];
 
       for (let i = 0; i < words.length; i += chunkSize) {
