@@ -68,7 +68,7 @@
 
     .response-text {
       margin-top: 20px;
-      min-height: 60px;
+      min-height: 50px;
     }
 
     .toggle-text {
@@ -150,7 +150,7 @@
 
     function prepareChunks(text) {
       const words = text.split(" ");
-      const chunkSize = 25; // Aprox. 3 líneas
+      const chunkSize = 18; // ahora solo 2 líneas aprox.
       chunks = [];
 
       for (let i = 0; i < words.length; i += chunkSize) {
