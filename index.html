@@ -2,122 +2,105 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Commute AI</title>
+  <title>Commute AI-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
-      background-color: transparent;
+      background: transparent;
+      color: #000;
       margin: 0;
       padding: 0;
     }
 
-    .ai-container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 10px;
-    }
-
-    .ai-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: stretch;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
+    .chat-container {
+      max-width: 400px;
+      height: 300px;
+      margin: 20px auto;
+      background-color: #ffffffcc;
       border: 1px solid #ccc;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 14px;
-      box-sizing: border-box;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     }
 
-    button#sendBtn {
+    .chat-response {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .chat-input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .chat-button {
       background-color: #000;
+      color: white;
       border: none;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      padding: 10px 14px;
+      margin-left: 10px;
+      border-radius: 10px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: background 0.3s;
     }
 
-    button#sendBtn:hover {
-      background-color: #222;
+    .chat-button:hover {
+      background-color: #333;
     }
 
-    button#sendBtn svg {
-      fill: white;
-    }
-
-    #chatBox {
-      max-height: 160px;
-      overflow-y: auto;
-      margin-top: 15px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 1.5;
-      display: none;
-    }
-
-    .close-btn {
-      text-align: right;
-      font-size: 13px;
-      cursor: pointer;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    @media (max-width: 600px) {
-      .ai-box {
-        flex-direction: column;
-      }
-
-      button#sendBtn {
-        align-self: flex-end;
-      }
+    .chat-button svg {
+      width: 16px;
+      height: 16px;
     }
   </style>
 </head>
 <body>
 
-  <div class="ai-container">
-    <div class="ai-box">
-      <input type="text" id="question" placeholder="Escriba su consulta aquí" />
-      <button id="sendBtn" onclick="askAI()" aria-label="Consultar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
-          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+  <div class="chat-container">
+    <div class="chat-response" id="chatResponse">Escribe tu consulta abajo...</div>
+    <div class="chat-input-area">
+      <input type="text" id="userInput" class="chat-input" placeholder="Escriba su consulta aquí" />
+      <button class="chat-button" onclick="askAI()">
+        <!-- Flecha hacia arriba estilo chat -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
       </button>
-    </div>
-    <div id="chatBox">
-      <div class="close-btn" onclick="closeChat()">Cerrar</div>
-      <div id="responseText"></div>
     </div>
   </div>
 
   <script>
     async function askAI() {
-      const question = document.getElementById("question").value.trim();
-      const chatBox = document.getElementById("chatBox");
-      const responseText = document.getElementById("responseText");
+      const input = document.getElementById("userInput");
+      const responseBox = document.getElementById("chatResponse");
+      const question = input.value.trim();
 
       if (!question) {
-        responseText.innerText = "Por favor escribe una consulta.";
-        chatBox.style.display = "block";
+        responseBox.innerText = "Por favor escribe una consulta.";
         return;
       }
 
-      responseText.innerText = "Pensando...";
-      chatBox.style.display = "block";
+      responseBox.innerText = "Pensando...";
 
       try {
         const res = await fetch("https://commute-ai.vercel.app/api/ask", {
@@ -129,17 +112,12 @@
         });
 
         const data = await res.json();
-        responseText.innerText = data.answer || "No se pudo obtener respuesta.";
+        responseBox.innerText = "Commute AI-wear: " + (data.answer || "No se pudo obtener respuesta.");
       } catch (err) {
-        responseText.innerText = "Error al conectar con la IA: " + err.message;
+        responseBox.innerText = "Error al conectar con Commute AI-wear: " + err.message;
       }
-    }
 
-    function closeChat() {
-      const chatBox = document.getElementById("chatBox");
-      const responseText = document.getElementById("responseText");
-      responseText.innerText = "";
-      chatBox.style.display = "none";
+      input.value = "";
     }
   </script>
 
