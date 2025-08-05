@@ -8,95 +8,118 @@
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
-      background-color: #e8d5b7;
+      background: transparent;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
     }
 
-    .consulta-box {
-      background: #fff;
-      border: 2px dashed #aaa;
-      border-radius: 15px;
+    .chat-container {
+      max-width: 600px;
+      width: 100%;
       padding: 20px;
-      max-width: 420px;
-      width: 100%;
-      box-sizing: border-box;
     }
 
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 16px;
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #userInput {
+      padding: 12px;
       font-size: 16px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      box-sizing: border-box;
     }
 
-    button {
-      padding: 10px 20px;
-      border: 2px solid #000;
-      border-radius: 14px;
-      background-color: #fff;
+    #sendButton {
+      background: black;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
       font-size: 16px;
-      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
 
-    button:hover {
-      background-color: #000;
-      color: #fff;
-    }
-
-    #respuesta {
-      display: none;
-      margin-top: 20px;
-      background: #fff;
-      border-radius: 15px;
-      padding: 20px;
+    .response-box {
       position: relative;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: none;
     }
 
-    #cerrar {
+    .close-btn {
       position: absolute;
       top: 10px;
-      right: 15px;
-      font-size: 14px;
+      right: 14px;
+      border: none;
+      background: none;
       font-weight: bold;
-      color: #000;
+      font-size: 14px;
       cursor: pointer;
+    }
+
+    .response-text {
+      margin-top: 20px;
+      min-height: 60px;
+    }
+
+    .toggle-text {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="consulta-box">
-    <input type="text" id="pregunta" placeholder="Escriba su consulta aquí" />
-    <button onclick="consultar()">Consultar</button>
+  <div class="chat-container">
+    <div class="input-group" id="inputGroup">
+      <input type="text" id="userInput" placeholder="Escriba su consulta aquí">
+      <button id="sendButton">Consultar</button>
+    </div>
 
-    <div id="respuesta">
-      <span id="cerrar" onclick="cerrarRespuesta()">Cerrar</span>
-      <div id="contenido-respuesta"></div>
+    <div class="response-box" id="responseBox">
+      <button class="close-btn" onclick="closeResponse()">Cerrar</button>
+      <div class="response-text" id="responseText"></div>
+      <div class="toggle-text" id="toggleText" onclick="showNext()">Continuar leyendo</div>
     </div>
   </div>
 
   <script>
-    async function consultar() {
-      const input = document.getElementById("pregunta");
-      const respuesta = document.getElementById("respuesta");
-      const contenido = document.getElementById("contenido-respuesta");
+    const sendButton = document.getElementById("sendButton");
+    const userInput = document.getElementById("userInput");
+    const responseBox = document.getElementById("responseBox");
+    const responseText = document.getElementById("responseText");
+    const toggleText = document.getElementById("toggleText");
+    const inputGroup = document.getElementById("inputGroup");
 
-      const question = input.value.trim();
+    let chunks = [];
+    let currentIndex = 0;
+
+    sendButton.addEventListener("click", async () => {
+      const question = userInput.value.trim();
       if (!question) return;
 
-      contenido.innerText = "Pensando...";
-      respuesta.style.display = "block";
+      inputGroup.classList.add("hidden");
+      responseBox.style.display = "block";
+      responseText.innerText = "Pensando...";
+      toggleText.style.display = "none";
 
       try {
         const res = await fetch("/api/ask", {
@@ -104,15 +127,48 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question })
         });
+
         const data = await res.json();
-        contenido.innerText = data.answer || "No se pudo obtener respuesta.";
+        const answer = data.answer || "No se pudo obtener respuesta.";
+        prepareChunks(answer);
+        showNext(); // show first chunk
       } catch (err) {
-        contenido.innerText = "Error: " + err.message;
+        responseText.innerText = "Error: " + err.message;
+        toggleText.style.display = "none";
       }
+    });
+
+    function closeResponse() {
+      responseBox.style.display = "none";
+      inputGroup.classList.remove("hidden");
+      userInput.value = "";
+      responseText.innerHTML = "";
+      toggleText.style.display = "none";
+      chunks = [];
+      currentIndex = 0;
     }
 
-    function cerrarRespuesta() {
-      document.getElementById("respuesta").style.display = "none";
+    function prepareChunks(text) {
+      const words = text.split(" ");
+      const chunkSize = 25; // aprox. 3 líneas
+      chunks = [];
+
+      for (let i = 0; i < words.length; i += chunkSize) {
+        chunks.push(words.slice(i, i + chunkSize).join(" "));
+      }
+
+      currentIndex = 0;
+      toggleText.style.display = chunks.length > 1 ? "block" : "none";
+    }
+
+    function showNext() {
+      if (currentIndex < chunks.length) {
+        responseText.innerText = chunks[currentIndex];
+        currentIndex++;
+        if (currentIndex >= chunks.length) {
+          toggleText.style.display = "none";
+        }
+      }
     }
   </script>
 
