@@ -13,30 +13,31 @@
       font-family: 'Montserrat', sans-serif;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
+      align-items: flex-start;
+      padding-top: 20px;
+    }
+
+    .accordion-header {
+      background: black;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 16px;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px 12px 0 0;
+      cursor: pointer;
     }
 
     .chat-container {
       width: 100%;
       max-width: 600px;
-      height: 85vh;
-      display: flex;
+      display: none;
       flex-direction: column;
       background: white;
-      border-radius: 12px;
+      border-radius: 0 0 12px 12px;
       box-shadow: 0 0 12px rgba(0,0,0,0.1);
       overflow: hidden;
-      position: relative;
-    }
-
-    .chat-header {
-      padding: 16px;
-      background: black;
-      color: white;
-      font-weight: bold;
-      font-size: 18px;
-      text-align: left;
     }
 
     .chat-messages {
@@ -46,6 +47,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      max-height: 400px;
     }
 
     .chat-input {
@@ -94,37 +96,32 @@
       border-top-right-radius: 0;
     }
 
-    /* Estilos para móviles */
     @media (max-width: 480px) {
-      .chat-container {
-        height: 95vh;
-        border-radius: 0;
-        box-shadow: none;
-      }
-
-      .chat-header {
+      .accordion-header {
         font-size: 16px;
         padding: 12px;
       }
 
+      .chat-container {
+        box-shadow: none;
+      }
+
       .chat-messages {
         padding: 10px;
+        max-height: 60vh;
       }
 
       .chat-input {
-        padding: 10px;
         flex-direction: column;
       }
 
       .chat-input input {
         font-size: 13px;
-        padding: 10px;
       }
 
       .chat-input button {
         width: 100%;
         font-size: 13px;
-        padding: 10px;
       }
 
       .bubble-user, .bubble-bot {
@@ -136,11 +133,10 @@
 </head>
 <body>
 
-  <div class="chat-container">
-    <div class="chat-header">Commute Ai-wear</div>
-    <div class="chat-messages" id="chatMessages">
-      <!-- mensajes se insertan aquí -->
-    </div>
+  <div class="accordion-header" onclick="toggleChat()">Commute Ai-wear</div>
+
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input">
       <input type="text" id="userInput" placeholder="Escriba su consulta aquí..." />
       <button onclick="sendMessage()">Enviar</button>
@@ -148,6 +144,11 @@
   </div>
 
   <script>
+    function toggleChat() {
+      const container = document.getElementById("chatContainer");
+      container.style.display = (container.style.display === "flex") ? "none" : "flex";
+    }
+
     const chatMessages = document.getElementById("chatMessages");
     const userInput = document.getElementById("userInput");
 
@@ -155,7 +156,6 @@
       const question = userInput.value.trim();
       if (!question) return;
 
-      // Mostrar mensaje del usuario
       const userBubble = document.createElement("div");
       userBubble.className = "bubble-user";
       userBubble.innerText = question;
@@ -163,7 +163,6 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
       userInput.value = "";
 
-      // Mostrar mensaje de "Pensando..."
       const botBubble = document.createElement("div");
       botBubble.className = "bubble-bot";
       botBubble.innerText = "Pensando...";
