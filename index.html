@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -6,95 +7,129 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Montserrat', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background: transparent;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      height: 80vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-    }.chat-header {
-  background-color: white;
-  padding: 16px;
-  font-size: 20px;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      position: relative;
+    }
 
-.chat-box {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .chat-header {
+      padding: 16px;
+      background: black;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      text-align: left;
+    }
 
-.chat-input {
-  display: flex;
-  border-top: 1px solid #ddd;
-  padding: 10px;
-  background-color: white;
-}
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-#userInput {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-}
+    .chat-input {
+      display: flex;
+      padding: 16px;
+      border-top: 1px solid #ccc;
+      gap: 10px;
+    }
 
-#sendButton {
-  margin-left: 10px;
-  padding: 10px 16px;
-  font-size: 16px;
-  border: none;
-  border-radius: 20px;
-  background-color: black;
-  color: white;
-  cursor: pointer;
-}
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
 
-.message {
-  max-width: 80%;
-  padding: 12px 16px;
-  border-radius: 16px;
-  line-height: 1.4;
-  word-wrap: break-word;
-}
+    .chat-input button {
+      background: black;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
-.user {
-  background-color: #e0e0e0;
-  align-self: flex-start;
-}
+    .bubble-user, .bubble-bot {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      display: inline-block;
+    }
 
-.ai {
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  align-self: flex-end;
-}
+    .bubble-user {
+      background: #e0e0e0;
+      align-self: flex-start;
+      border-top-left-radius: 0;
+    }
 
+    .bubble-bot {
+      background: #d0f0ff;
+      align-self: flex-end;
+      border-top-right-radius: 0;
+    }
   </style>
 </head>
-<body>  <div class="chat-header">Commute Ai-wear</div>  <div class="chat-box" id="chatBox"></div>  <div class="chat-input">
-    <input type="text" id="userInput" placeholder="Escriba su consulta aquí" />
-    <button id="sendButton">Enviar</button>
-  </div>  <script>
-    const chatBox = document.getElementById("chatBox");
-    const userInput = document.getElementById("userInput");
-    const sendButton = document.getElementById("sendButton");
+<body>
 
-    sendButton.addEventListener("click", async () => {
+  <div class="chat-container">
+    <div class="chat-header">Commute Ai-wear</div>
+    <div class="chat-messages" id="chatMessages">
+      <!-- mensajes se insertan aquí -->
+    </div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Escriba su consulta aquí..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    const chatMessages = document.getElementById("chatMessages");
+    const userInput = document.getElementById("userInput");
+
+    async function sendMessage() {
       const question = userInput.value.trim();
       if (!question) return;
 
-      appendMessage(question, 'user');
+      // Mostrar mensaje del usuario
+      const userBubble = document.createElement("div");
+      userBubble.className = "bubble-user";
+      userBubble.innerText = question;
+      chatMessages.appendChild(userBubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
       userInput.value = "";
 
-      appendMessage("Pensando...", 'ai');
-      const aiBubble = chatBox.lastElementChild;
+      // Mostrar mensaje de "Pensando..."
+      const botBubble = document.createElement("div");
+      botBubble.className = "bubble-bot";
+      botBubble.innerText = "Pensando...";
+      chatMessages.appendChild(botBubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
 
       try {
         const res = await fetch("/api/ask", {
@@ -102,21 +137,14 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question })
         });
-
         const data = await res.json();
-        const answer = data.answer || "No se pudo obtener respuesta.";
-        aiBubble.innerText = answer;
+        botBubble.innerText = data.answer || "No se pudo obtener respuesta.";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
       } catch (err) {
-        aiBubble.innerText = "Error: " + err.message;
+        botBubble.innerText = "Error: " + err.message;
       }
-    });
-
-    function appendMessage(text, sender) {
-      const msg = document.createElement("div");
-      msg.className = `message ${sender}`;
-      msg.innerText = text;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
     }
-  </script></body>
+  </script>
+
+</body>
 </html>
