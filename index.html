@@ -9,35 +9,43 @@
     body {
       margin: 0;
       padding: 0;
-      background: transparent;
+      background: #e9d4ae;
       font-family: 'Montserrat', sans-serif;
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: flex-start;
-      padding-top: 20px;
+      height: 100vh;
+      overflow-x: hidden;
     }
 
     .accordion-header {
+      position: fixed;
+      top: 20px;
+      left: 20px;
       background: black;
       color: white;
       font-weight: bold;
       font-size: 18px;
-      padding: 16px;
-      width: 100%;
-      max-width: 600px;
-      border-radius: 12px 12px 0 0;
+      padding: 10px 14px;
+      border-radius: 16px 0 16px 0;
+      z-index: 10;
       cursor: pointer;
     }
 
     .chat-container {
-      width: 100%;
-      max-width: 600px;
+      position: fixed;
+      top: 60px;
+      left: 20px;
+      width: 90vw;
+      max-width: 360px;
+      height: 70vh;
       display: none;
       flex-direction: column;
       background: white;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       overflow: hidden;
+      z-index: 9;
     }
 
     .chat-messages {
@@ -47,20 +55,19 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 400px;
     }
 
     .chat-input {
       display: flex;
-      padding: 12px;
+      flex-direction: column;
+      padding: 10px;
       border-top: 1px solid #ccc;
       gap: 8px;
     }
 
     .chat-input input {
-      flex: 1;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 12px;
       border: 1px solid #ccc;
       font-size: 14px;
     }
@@ -69,19 +76,20 @@
       background: black;
       color: white;
       border: none;
-      padding: 10px 14px;
-      border-radius: 8px;
+      padding: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 14px;
     }
 
     .bubble-user, .bubble-bot {
       max-width: 80%;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 16px;
       font-size: 14px;
       line-height: 1.4;
       display: inline-block;
+      word-wrap: break-word;
     }
 
     .bubble-user {
@@ -96,44 +104,25 @@
       border-top-right-radius: 0;
     }
 
-    @media (max-width: 480px) {
-      .accordion-header {
-        font-size: 16px;
-        padding: 12px;
-      }
-
+    @media (min-width: 768px) {
       .chat-container {
-        box-shadow: none;
+        top: 80px;
+        left: 40px;
+        width: 400px;
+        height: 75vh;
       }
 
-      .chat-messages {
-        padding: 10px;
-        max-height: 60vh;
-      }
-
-      .chat-input {
-        flex-direction: column;
-      }
-
-      .chat-input input {
-        font-size: 13px;
-      }
-
-      .chat-input button {
-        width: 100%;
-        font-size: 13px;
-      }
-
-      .bubble-user, .bubble-bot {
-        font-size: 13px;
-        padding: 6px 10px;
+      .accordion-header {
+        top: 30px;
+        left: 40px;
+        font-size: 20px;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="accordion-header" onclick="toggleChat()">Commute Ai-wear</div>
+  <div class="accordion-header" onclick="toggleChat()">Commute<br>Ai-wear</div>
 
   <div class="chat-container" id="chatContainer">
     <div class="chat-messages" id="chatMessages"></div>
@@ -146,7 +135,7 @@
   <script>
     function toggleChat() {
       const container = document.getElementById("chatContainer");
-      container.style.display = (container.style.display === "flex") ? "none" : "flex";
+      container.style.display = container.style.display === "flex" ? "none" : "flex";
     }
 
     const chatMessages = document.getElementById("chatMessages");
