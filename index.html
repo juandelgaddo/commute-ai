@@ -1,160 +1,124 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Commute Ai-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
+    }body {
+  font-family: system-ui, sans-serif;
+  background-color: #e7d2ae;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-    header {
-      background: #fff;
-      padding: 16px;
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: bold;
-      border-bottom: 1px solid #ddd;
-    }
+.chat-wrapper {
+  background: #fff;
+  width: 95%;
+  max-width: 700px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
 
-    #chat {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+.chat-header {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 500;
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+}
 
-    .message {
-      max-width: 80%;
-      padding: 12px 16px;
-      border-radius: 18px;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
+.chat-body {
+  flex-grow: 1;
+  background: #f3f3f3;
+  padding: 20px;
+  overflow-y: auto;
+}
 
-    .user {
-      align-self: flex-end;
-      background-color: #d1e7ff;
-      color: #000;
-      border-bottom-right-radius: 4px;
-    }
+.chat-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background: #fff;
+}
 
-    .bot {
-      align-self: flex-start;
-      background-color: #eaeaea;
-      color: #000;
-      border-bottom-left-radius: 4px;
-    }
+.chat-input {
+  flex-grow: 1;
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  font-size: 14px;
+  outline: none;
+}
 
-    footer {
-      background: #fff;
-      padding: 10px 16px;
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid #ddd;
-    }
+.send-btn {
+  background: black;
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  font-size: 18px;
+  cursor: pointer;
+}
 
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      font-size: 1rem;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      outline: none;
-    }
-
-    button {
-      background: black;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    button:hover {
-      background: #333;
-    }
   </style>
 </head>
 <body>
+  <div class="chat-wrapper">
+    <div class="chat-header">Commute Ai-wear</div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-input-area">
+      <input type="text" id="userInput" class="chat-input" placeholder="Escriba su consulta aquí" />
+      <button class="send-btn" id="sendButton">&#8593;</button>
+    </div>
+  </div>  <script>
+    const sendButton = document.getElementById("sendButton");
+    const userInput = document.getElementById("userInput");
+    const chatBody = document.getElementById("chatBody");
 
-  <header>Commute Ai-wear</header>
+    sendButton.addEventListener("click", async () => {
+      const question = userInput.value.trim();
+      if (!question) return;
 
-  <div id="chat"></div>
+      appendMessage("Tú", question);
+      userInput.value = "";
 
-  <footer>
-    <input type="text" id="userInput" placeholder="Escriba su consulta aquí" />
-    <button id="sendButton">↑</button>
-  </footer>
-
-  <script>
-    const chat = document.getElementById("chat");
-    const input = document.getElementById("userInput");
-    const button = document.getElementById("sendButton");
-
-    button.addEventListener("click", sendMessage);
-    input.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") sendMessage();
-    });
-
-    async function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      appendMessage(text, "user");
-      input.value = "";
-
-      appendMessage("Pensando...", "bot");
+      const msg = document.createElement("div");
+      msg.textContent = "Pensando...";
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
         const res = await fetch("/api/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: text })
+          body: JSON.stringify({ question })
         });
-
         const data = await res.json();
-        const botReply = data.answer || "No se pudo obtener respuesta.";
-
-        // Replace "Pensando..." with real response
-        const lastBotMessage = chat.querySelector(".bot:last-child");
-        lastBotMessage.innerText = botReply;
-
-        // Scroll to bottom
-        chat.scrollTop = chat.scrollHeight;
+        msg.textContent = "Commute Ai-wear: " + (data.answer || "No se pudo obtener respuesta.");
       } catch (err) {
-        const lastBotMessage = chat.querySelector(".bot:last-child");
-        lastBotMessage.innerText = "Error: " + err.message;
+        msg.textContent = "Error: " + err.message;
       }
-    }
 
-    function appendMessage(text, sender) {
-      const msg = document.createElement("div");
-      msg.className = `message ${sender}`;
-      msg.innerText = text;
-      chat.appendChild(msg);
-      chat.scrollTop = chat.scrollHeight;
-    }
-  </script>
+      chatBody.scrollTop = chatBody.scrollHeight;
+    });
 
-</body>
+    function appendMessage(sender, text) {
+      const div = document.createElement("div");
+      div.textContent = sender + ": " + text;
+      chatBody.appendChild(div);
+    }
+  </script></body>
 </html>
