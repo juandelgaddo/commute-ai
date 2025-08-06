@@ -2,187 +2,157 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Commute AI-wear</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Commute Ai-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 0;
-      background: transparent;
       font-family: 'Montserrat', sans-serif;
-    }
-
-    .chat-container {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 320px;
-      max-height: 260px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      padding: 15px;
-      box-sizing: border-box;
-      z-index: 9999;
-    }
-
-    .input-group {
+      background: #f4f4f4;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      height: 100vh;
     }
 
-    #userInput {
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 8px;
+    header {
+      background: #fff;
+      padding: 16px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #chat {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #d1e7ff;
+      color: #000;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #eaeaea;
+      color: #000;
+      border-bottom-left-radius: 4px;
+    }
+
+    footer {
+      background: #fff;
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #ddd;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 20px;
       border: 1px solid #ccc;
-      width: 100%;
+      outline: none;
     }
 
-    #sendButton {
+    button {
       background: black;
       color: white;
-      padding: 10px;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
       cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .response-box {
-      position: relative;
-      background: white;
-      border-radius: 10px;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 13px;
-      display: none;
-      max-height: 100px;
-      overflow: hidden;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 6px;
-      right: 10px;
-      border: none;
-      background: none;
-      font-weight: bold;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .response-text {
-      margin-top: 24px;
-      min-height: 40px;
-    }
-
-    .toggle-text {
-      text-align: center;
-      margin-top: 8px;
-      font-size: 12px;
-      color: #333;
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    @media (max-width: 400px) {
-      .chat-container {
-        width: 90%;
-        bottom: 10px;
-      }
+    button:hover {
+      background: #333;
     }
   </style>
 </head>
 <body>
 
-  <div class="chat-container">
-    <div class="input-group" id="inputGroup">
-      <input type="text" id="userInput" placeholder="Escriba su consulta aquí">
-      <button id="sendButton">Consultar</button>
-    </div>
+  <header>Commute Ai-wear</header>
 
-    <div class="response-box" id="responseBox">
-      <button class="close-btn" onclick="closeResponse()">Cerrar</button>
-      <div class="response-text" id="responseText"></div>
-      <div class="toggle-text" id="toggleText" onclick="showNext()">Continuar leyendo</div>
-    </div>
-  </div>
+  <div id="chat"></div>
+
+  <footer>
+    <input type="text" id="userInput" placeholder="Escriba su consulta aquí" />
+    <button id="sendButton">↑</button>
+  </footer>
 
   <script>
-    const sendButton = document.getElementById("sendButton");
-    const userInput = document.getElementById("userInput");
-    const responseBox = document.getElementById("responseBox");
-    const responseText = document.getElementById("responseText");
-    const toggleText = document.getElementById("toggleText");
-    const inputGroup = document.getElementById("inputGroup");
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("userInput");
+    const button = document.getElementById("sendButton");
 
-    let chunks = [];
-    let currentIndex = 0;
+    button.addEventListener("click", sendMessage);
+    input.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
 
-    sendButton.addEventListener("click", async () => {
-      const question = userInput.value.trim();
-      if (!question) return;
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
 
-      inputGroup.classList.add("hidden");
-      responseBox.style.display = "block";
-      responseText.innerText = "Pensando...";
-      toggleText.style.display = "none";
+      appendMessage(text, "user");
+      input.value = "";
+
+      appendMessage("Pensando...", "bot");
 
       try {
         const res = await fetch("/api/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question })
+          body: JSON.stringify({ question: text })
         });
 
         const data = await res.json();
-        const answer = data.answer || "No se pudo obtener respuesta.";
-        prepareChunks(answer);
-        showNext();
+        const botReply = data.answer || "No se pudo obtener respuesta.";
+
+        // Replace "Pensando..." with real response
+        const lastBotMessage = chat.querySelector(".bot:last-child");
+        lastBotMessage.innerText = botReply;
+
+        // Scroll to bottom
+        chat.scrollTop = chat.scrollHeight;
       } catch (err) {
-        responseText.innerText = "Error: " + err.message;
-        toggleText.style.display = "none";
+        const lastBotMessage = chat.querySelector(".bot:last-child");
+        lastBotMessage.innerText = "Error: " + err.message;
       }
-    });
-
-    function closeResponse() {
-      responseBox.style.display = "none";
-      inputGroup.classList.remove("hidden");
-      userInput.value = "";
-      responseText.innerHTML = "";
-      toggleText.style.display = "none";
-      chunks = [];
-      currentIndex = 0;
     }
 
-    function prepareChunks(text) {
-      const words = text.split(" ");
-      const chunkSize = 18; // ~2 líneas
-      chunks = [];
-
-      for (let i = 0; i < words.length; i += chunkSize) {
-        chunks.push(words.slice(i, i + chunkSize).join(" "));
-      }
-
-      currentIndex = 0;
-      toggleText.style.display = chunks.length > 1 ? "block" : "none";
-    }
-
-    function showNext() {
-      if (currentIndex < chunks.length) {
-        responseText.innerText = chunks[currentIndex];
-        currentIndex++;
-        if (currentIndex >= chunks.length) {
-          toggleText.style.display = "none";
-        }
-      }
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.innerText = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
     }
   </script>
 
