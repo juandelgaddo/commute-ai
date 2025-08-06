@@ -14,21 +14,18 @@
     }
 
     .chat-container {
-      width: 300px;
-      height: 240px;
-      padding: 10px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 9999;
+      width: 320px;
+      max-height: 260px;
       background: #fff;
-      border-radius: 12px;
+      border-radius: 14px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      padding: 15px;
+      box-sizing: border-box;
+      z-index: 9999;
     }
 
     .input-group {
@@ -42,6 +39,7 @@
       font-size: 14px;
       border-radius: 8px;
       border: 1px solid #ccc;
+      width: 100%;
     }
 
     #sendButton {
@@ -60,8 +58,10 @@
       border-radius: 10px;
       padding: 10px;
       margin-top: 10px;
-      font-size: 14px;
+      font-size: 13px;
       display: none;
+      max-height: 100px;
+      overflow: hidden;
     }
 
     .close-btn {
@@ -78,7 +78,6 @@
     .response-text {
       margin-top: 24px;
       min-height: 40px;
-      font-size: 13px;
     }
 
     .toggle-text {
@@ -96,7 +95,6 @@
     @media (max-width: 400px) {
       .chat-container {
         width: 90%;
-        height: auto;
         bottom: 10px;
       }
     }
@@ -166,7 +164,7 @@
 
     function prepareChunks(text) {
       const words = text.split(" ");
-      const chunkSize = 18; // Aprox. 2 líneas
+      const chunkSize = 18; // ~2 líneas
       chunks = [];
 
       for (let i = 0; i < words.length; i += chunkSize) {
