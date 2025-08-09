@@ -198,11 +198,16 @@ El cliente debe estar claro de que su receta esté acorde con la cotización.
 El cliente es responsable de la información que nos proporciona, ya que no hay devoluciones de dinero por errores de este tipo.
 Cuando el cliente finalice su estimado, recomendamos continuar al área de Garantías para conocer nuestras políticas antes de confirmar su compra.
 
-PLAZO Y POLITICA DE CORRECCION DE ORDENES DE LENTES RECETADOS.
-El cliente tiene 24 horas desde la confirmación de su orden para corregir cualquier error relacionado con sus lentes recetados.
+PLAZO Y POLÍTICA DE CORRECCIÓN DE ÓRDENES DE LENTES RECETADOS Y/O MONTURAS
+Esto aplica si, a última hora, el cliente desea cambiar la montura o si hubo un error en la selección de sus lentes recetados.
+El cliente tiene 24 horas desde la confirmación de su orden para corregir cualquier error relacionado con sus lentes recetados o solicitar un cambio de montura.
 Si la notificación llega después de este plazo, la orden no podrá corregirse, a menos que la montura aún no haya salido de las instalaciones de Commute Eyewear. En ese caso, evaluaremos si es posible hacer el ajuste.
 En Commute Eyewear no nos desentendemos de nuestros clientes ni dificultamos la comunicación.
 Desde el primer contacto dejamos claro que estamos aquí para garantizar que reciba una gafa que vale mucho más de lo que paga por ella.
+
+DESCRIPCION DEL SITIO EN LINEA Y SERVICIO OFFLINE.
+Este es el sitio en línea informativo oficial de Commute Eyewear, donde el cliente podrá ver precios, explorar catálogos, obtener información sobre lentes recetados, realizar su cotización online y contactarnos.
+El servicio se ofrece fuera de línea y de forma personalizada, donde el cliente podrá recibir algún descuento, probarse las gafas, completar la información necesaria para ordenar lentes recetados y ponerle rostro a Commute Eyewear.
 `;
   
   try {
