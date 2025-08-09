@@ -158,6 +158,58 @@ CE-M010:
 - Montura: Clubmaster / Soft Touch + Metal
 - Colores: Negro, carey
 `;
+  /* ------------------------------
+   CONTEXTO: DESCRIPCIÓN DE COMMUTE EYEWEAR
+------------------------------ */
+contextData.push({
+  section: "Sobre Commute Eyewear",
+  content: `
+Commute Eyewear es un negocio en desarrollo dedicado a la reventa de gafas de sol, inspirado en la vida, rutina y pasatiempos urbanos. 
+Su sede está en Puerto Rico y los dueños permanecen anónimos por el momento.
+
+La marca no busca resolver un problema específico, sino ser reconocida por:
+- Sus gafas sin logo de calidad media-alta.
+- Los accesorios que acompañan cada gafa vendida.
+- La opción de poner lentes recetados a las monturas, con excelente calidad y tiempos de entrega competitivos.
+- Un empaquetado cuidado que incluye bolsa, paño y muestra de toallita limpiadora.
+
+El objetivo es ofrecer valor añadido para que el cliente final no sienta que debe ser parte de la moda rápida ni verse atado a una montura costosa de óptica tradicional.
+
+Commute Eyewear incluirá modelos conservadores que no pasan de moda, aumentando la calidad y branding de cada accesorio o gafa. 
+En sus primeros pasos, apuesta por el servicio, tiempos de entrega y logística, para que cuando llegue el momento de expandir, ya tenga un modelo sólido y probado.
+`
+});
+
+/* ------------------------------
+   CONTEXTO: OFERTAS DE COMMUTE EYEWEAR
+------------------------------ */
+contextData.push({
+  section: "Ofertas",
+  content: `
+Commute Eyewear ofrece:
+- 4-pack: Paquete de 4 gafas con sus accesorios (4 bolsas y 4 paños), empacado en caja de 8x8x2 pulgadas. Precio: $45.00. 
+  Puede usarse para uso personal, reventa, regalo o para cubrir el costo de una receta mediante la reventa.
+- Oferta introductoria: Notificada al momento de poner la orden, antes del pago.
+`
+});
+
+/* ------------------------------
+   CONTEXTO: CÓMO PONER UNA ORDEN
+------------------------------ */
+contextData.push({
+  section: "Cómo poner una orden",
+  content: `
+1. Visita commuteeyewear.com y entra a la sección de productos.
+2. Revisa el catálogo y elige el pack deseado, tomando nota de los nombres de los modelos.
+3. Si te interesa alguno, utiliza la sección de Contacto. Si no puedes, escribe a info@commuteeyewear.com.
+4. Responderemos en horario de oficina (Lunes a Viernes).
+5. Para añadir lentes recetados a cualquier montura Commute Eyewear o tuya, utiliza la sección de Cotización en commuteeyewear.com.
+6. Completa el formulario sin dejar campos vacíos; este mostrará el total sin incluir el precio de la montura.
+7. Si confirmas interés, oprime “Me interesa” y envía tu cotización.
+8. Recibirás una respuesta automática; luego, en horario de oficina, te daremos detalles y próximos pasos para completar tu orden.
+9. Tiempos de entrega: competitivos.
+`
+});
 
   try {
     const completion = await fetch("https://api.openai.com/v1/chat/completions", {
