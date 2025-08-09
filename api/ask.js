@@ -183,7 +183,7 @@ COMO PONER UNA ORDEN
 1. Visita commuteeyewear.com y entra a la sección de productos.
 2. Revisa el catálogo y elige el pack deseado, tomando nota de los nombres de los modelos.
 3. Si te interesa alguno, utiliza la sección de Contacto. Si no puedes, escribe a info@commuteeyewear.com.
-4. Responderemos en horario de oficina (Lunes a Viernes).
+4. Responderemos en horario de oficina (Lunes a Viernes de 6:00pm a 9:00pm).
 5. Para añadir lentes recetados a cualquier montura Commute Eyewear o tuya, utiliza la sección de Cotización en commuteeyewear.com.
 6. Completa el formulario sin dejar campos vacíos; este mostrará el total sin incluir el precio de la montura.
 7. Si confirmas interés, oprime “Me interesa” y envía tu cotización.
