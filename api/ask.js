@@ -189,6 +189,14 @@ COMO PONER UNA ORDEN
 7. Si confirmas interés, oprime “Me interesa” y envía tu cotización.
 8. Recibirás una respuesta automática; luego, en horario de oficina, te daremos detalles y próximos pasos para completar tu orden.
 9. Tiempos de entrega: competitivos.
+
+AVISO IMPORTANTE SOBRE COTIZACIONES Y RESPONSABILIDAD DEL CLIENTE.
+En Commute Eyewear solo vendemos gafas de sol sin logo.
+No somos doctores para analizar recetas ni notar discrepancias, por lo que el cliente debe tener su receta vigente.
+El estimado se realiza en base a las selecciones que el cliente nos envía en la cotización, y los lentes se hacen en base a la receta que nos provee el cliente.
+El cliente debe estar claro de que su receta esté acorde con la cotización.
+El cliente es responsable de la información que nos proporciona, ya que no hay devoluciones de dinero por errores de este tipo.
+Cuando el cliente finalice su estimado, recomendamos continuar al área de Garantías para conocer nuestras políticas antes de confirmar su compra.
 `;
   
   try {
