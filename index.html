@@ -27,18 +27,7 @@
     max-width: 520px;
   }
 
-  /* Título dentro del chatbox */
-  .chat-header {
-    background: #000;
-    color: #fff;
-    font-weight: bold;
-    font-size: 20px;
-    padding: 14px 18px;
-    font-family: 'Montserrat', sans-serif;
-    text-align: left;
-    white-space: nowrap; /* Evita salto de línea */
-  }
-
+  /* Chat container con título integrado */
   .chat-container {
     width: 100%;
     height: min(88dvh, 860px);
@@ -48,6 +37,20 @@
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     overflow: hidden;
+  }
+
+  /* Título dentro del chatbox */
+  .chat-header {
+    background: #000;
+    color: #fff;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 14px 18px;
+    text-align: left;
+    white-space: nowrap;       /* Evita salto de línea */
+    overflow: hidden;          /* Evita que se desborde */
+    text-overflow: ellipsis;   /* Agrega "..." si es muy largo */
+    font-family: 'Montserrat', sans-serif;
   }
 
   .chat-messages {
