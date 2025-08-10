@@ -5,120 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Commute Ai-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent; /* Fondo completamente transparente */
-      font-family: 'Montserrat', sans-serif;
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      height: 100vh;
-      overflow-x: hidden;
-    }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center;     /* Centrado vertical */
+    height: 100vh;           /* Toda la altura de la pantalla */
+    overflow-x: hidden;
+  }
 
-    .accordion-header {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: black;
-      color: white;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 10px 14px;
-      border-radius: 16px 0 16px 0;
-      z-index: 10;
-      cursor: pointer;
-    }
+  .accordion-header {
+    position: absolute; /* flotante pero centrado arriba */
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: black;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 14px;
+    border-radius: 16px 0 16px 0;
+    z-index: 10;
+    cursor: pointer;
+    text-align: center;
+  }
 
-    .chat-container {
-      position: fixed;
-      top: 60px;
-      left: 20px;
-      width: 90vw;
-      max-width: 360px;
-      height: 60vh;
-      display: flex;
-      flex-direction: column;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      overflow: hidden;
-      z-index: 9;
-    }
+  .chat-container {
+    width: 90vw;            /* Ancho relativo */
+    max-width: 500px;       /* Límite para pantallas grandes */
+    height: 80vh;           /* Alto relativo a la pantalla */
+    max-height: 700px;      /* Límite en desktop */
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    overflow: hidden;
+    z-index: 9;
+  }
 
-    .chat-messages {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+  .chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .chat-input {
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      border-top: 1px solid #ccc;
-      gap: 8px;
-    }
+  .chat-input {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    gap: 8px;
+  }
 
-    .chat-input input {
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
+  .chat-input input {
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
 
-    .chat-input button {
-      background: black;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+  .chat-input button {
+    background: black;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
 
-    .bubble-user, .bubble-bot {
-      max-width: 80%;
-      padding: 10px 14px;
-      border-radius: 16px;
-      font-size: 14px;
-      line-height: 1.4;
-      display: inline-block;
-      word-wrap: break-word;
-    }
+  .bubble-user, .bubble-bot {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: inline-block;
+    word-wrap: break-word;
+  }
 
-    .bubble-user {
-      background: #e0e0e0;
-      align-self: flex-start;
-      border-top-left-radius: 0;
-    }
+  .bubble-user {
+    background: #e0e0e0;
+    align-self: flex-start;
+    border-top-left-radius: 0;
+  }
 
-    .bubble-bot {
-      background: #d0f0ff;
-      align-self: flex-end;
-      border-top-right-radius: 0;
-    }
-
-    @media (min-width: 768px) {
-      .chat-container {
-        top: 80px;
-        left: 40px;
-        width: 400px;
-        height: 75vh;
-      }
-
-      .accordion-header {
-        top: 30px;
-        left: 40px;
-        font-size: 20px;
-      }
-    }
-  </style>
+  .bubble-bot {
+    background: #d0f0ff;
+    align-self: flex-end;
+    border-top-right-radius: 0;
+  }
+</style>
 </head>
 <body>
 
