@@ -120,13 +120,16 @@
 
   <div class="accordion-header" onclick="toggleChat()">Commute<br>Ai-wear</div>
 
-  <div class="chat-container" id="chatContainer">
-    <div class="chat-messages" id="chatMessages"></div>
-    <div class="chat-input">
-      <input type="text" id="userInput" placeholder="Escriba su consulta aquí..." />
-      <button onclick="sendMessage()">Enviar</button>
-    </div>
+ <div class="chat-container" id="chatContainer">
+  <div class="chat-header">Commute Ai-wear</div> <!-- Aquí el título -->
+  
+  <div class="chat-messages" id="chatMessages"></div>
+  
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="Escriba su consulta aquí..." />
+    <button onclick="sendMessage()">Enviar</button>
   </div>
+</div>
 
   <script>
     function toggleChat() {
