@@ -6,46 +6,50 @@
   <title>Commute Ai-wear</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 <style>
-  body {
+  html, body {
+    height: 100%;
     margin: 0;
-    padding: 0;
+  }
+  body {
     background: transparent;
     font-family: 'Montserrat', sans-serif;
+    min-height: 100dvh;
     display: flex;
-    justify-content: center; /* Centrado horizontal */
-    align-items: center;     /* Centrado vertical */
-    height: 100vh;           /* Toda la altura de la pantalla */
+    justify-content: center; /* centra el bloque en el ancho */
+    align-items: flex-start;  /* alinea arriba */
+    padding: 20px 16px;
+    box-sizing: border-box;
     overflow-x: hidden;
   }
 
+  .wrap {
+    width: 92vw;
+    max-width: 520px;
+  }
+
   .accordion-header {
-    position: absolute; /* flotante pero centrado arriba */
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: black;
-    color: white;
+    display: inline-block;
+    background: #000;
+    color: #fff;
     font-weight: bold;
     font-size: 18px;
+    line-height: 1.1;
     padding: 10px 14px;
     border-radius: 16px 0 16px 0;
-    z-index: 10;
     cursor: pointer;
-    text-align: center;
+    margin-bottom: 12px;
+    user-select: none;
   }
 
   .chat-container {
-    width: 90vw;            /* Ancho relativo */
-    max-width: 500px;       /* Límite para pantallas grandes */
-    height: 80vh;           /* Alto relativo a la pantalla */
-    max-height: 700px;      /* Límite en desktop */
+    width: 100%;
+    height: min(88dvh, 860px);
     display: flex;
     flex-direction: column;
-    background: white;
+    background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     overflow: hidden;
-    z-index: 9;
   }
 
   .chat-messages {
@@ -63,6 +67,7 @@
     padding: 10px;
     border-top: 1px solid #ccc;
     gap: 8px;
+    background: #fff;
   }
 
   .chat-input input {
@@ -73,8 +78,8 @@
   }
 
   .chat-input button {
-    background: black;
-    color: white;
+    background: #000;
+    color: #fff;
     border: none;
     padding: 10px;
     border-radius: 12px;
@@ -102,6 +107,11 @@
     background: #d0f0ff;
     align-self: flex-end;
     border-top-right-radius: 0;
+  }
+
+  @media (min-width: 768px) {
+    .accordion-header { font-size: 20px; }
+    .chat-container { height: min(85dvh, 900px); }
   }
 </style>
 </head>
